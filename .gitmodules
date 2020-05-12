@@ -1,3 +1,6 @@
 [submodule "dftdLowCov"]
 	path = dftdLowCov
 	url = https://github.com/TransmissibleCancerGroup/dftdLowCov.git
+[submodule "Devil"]
+	path = additional_scripts
+	url = https://github.com/ymk12345/Devil.git
