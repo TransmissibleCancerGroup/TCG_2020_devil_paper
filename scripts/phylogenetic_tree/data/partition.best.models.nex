@@ -1,0 +1,10 @@
+#nexus
+begin sets;
+    charset cnv = cnv_filtered_alignment_dft1_2020-04-24.fa: BIN, *;
+    charset mip = mips_filtered_dna_alignment_dft1_2020-04-24.fa: DNA, *;
+    charset mit = mito_filtered_dna_alignment_dft1_2020-04-24.fa: DNA, *;
+    charpartition mymodels =
+        GTR2+FO+ASC+R3: cnv,
+        K2P+ASC+R2: mip,
+        TIM2e+ASC: mit;
+end;
