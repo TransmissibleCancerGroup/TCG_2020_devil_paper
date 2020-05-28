@@ -39,17 +39,6 @@ if (!dir.exists(outdir)) {
 ######################
 # Function definitions
 ######################
-make_coordinates <- function(cnvs) {
-    cnvs <- copy(cnvs)
-    cnvs[Cancer_type == "DFT1", Category := "DFT1"]
-    cnvs[Cancer_type == "DFT2", Category := "DFT2"]
-    cnvs[Cancer_type == "Non-DFTD", Category := dftdLowCov::scan_col("(\\d+T\\d?) ", Sample_group, c('s'), c('sample'))]
-    cnvs[Cancer_type == "Non-DFTD", Category := paste("NonDFTD", Category)]
-    
-    coordinates <- cnvs[, .(Order=.I, chr=Chr, start=Start, end=End, Type, CNV_ID_ext, Category)]
-    return(coordinates)
-}
-
 get_cnvs_from_subset <- function(subset) {
     all_cnvs <- subset[, strsplit(paste(commonCnvIds, collapse=','), ',')][[1]]
     all_cnvs
