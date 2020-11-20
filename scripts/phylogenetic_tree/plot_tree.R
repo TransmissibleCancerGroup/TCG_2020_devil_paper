@@ -36,7 +36,8 @@ DUPLICATES <- haplotype_db[Cancer.type == "DFT1" & !is.na(Duplicate.or.time.cour
 # N.B. ggtree can italicise labels, but they came out as a mixture of italicised and regular
 # characters, so this script wraps the label in three underscores ('label' -> '___label___'),
 # and I italicised them afterwards in Inkscape
-ITALICISE <- c("10T2", "55T3", "160T", "162T", "187T1", "188T1", "196T1", "196T2", "204T", "272T1", "272T2", "272T3", "463T1", "463T3", "469T1", "470T1", "475T2", "480T1", "626T1", "636T1", "826T2", "1009T1", "1078T4", "1079T1", "1079T2")
+#ITALICISE <- c("10T2", "55T3", "160T", "162T", "187T1", "188T1", "196T1", "196T2", "204T", "272T1", "272T2", "272T3", "463T1", "463T3", "469T1", "470T1", "475T2", "480T1", "626T1", "636T1", "826T2", "1009T1", "1078T4", "1079T1", "1079T2")
+ITALICISE <- haplotype_db[Cancer.type == "DFT1" & `Included.in.tree.(Figure.1A,.Figure.S1)` %like% "italic", Sample_ID]
 
 # Loads the tree and does a small amount of preprocessing to standardise the look of the tree
 load_tree <- function(treefile) {
@@ -65,11 +66,13 @@ treefile = commandArgs(trailingOnly = TRUE)[1]
 tree <- load_tree(treefile)
 labels <- make_labels(tree)
 
+labels[haplotype_db, long_name := paste(long_name, Year.of.sampling, sep = "_"), on = c("shortname" = "Sample_ID")]
+
 # Reduce the tip label to just the sample ID (removes location and date info)
 tree$tip.label <- sapply(strsplit(tree$tip.label, "_"), `[[`, 1)
 
 # Attempt to define the base node of each clade via a pair of divergent
-# samples within the clade/subclade. The MRCA of the pair should be a 
+# samples within the clade/subclade. The MRCA of the pair should be a
 # good proxy for the basal node of the clade.
 pairs <- list(
     A1 = c("52T2", "136T"),
@@ -144,7 +147,7 @@ supplementary_plot <- supplementary_plot %<+% mydf +
                   colour = "black",
                   show.legend = FALSE) +
     geom_tiplab(aes(label = tiplab), parse = FALSE,
-                size = 1.0, colour="black", align=FALSE, offset = 0.0001, linetype = NA) 
+                size = 1.0, colour="black", align=FALSE, offset = 0.0001, linetype = NA)
 
 
 ggsave(plot=supplementary_plot,
@@ -177,7 +180,7 @@ ggsave(plot=fig1A %<+% mydf + geom_tippoint(pch = '*',
 ################
 labels[haplotype_db, is_cell_line := (Tissue.or.cell.line != "Tissue"), on = c("shortname" = "Sample_ID")]
 mydf <- labels[, .(tip.label=shortname, clade=clade, is_cell_line=is_cell_line)]
-mydf[, sz := as.numeric(ifelse(is_cell_line, 1.1, NA))]    
+mydf[, sz := as.numeric(ifelse(is_cell_line, 1.1, NA))]
 
 
 t <- ggtree(tree_by_clades, size = 0.25) + scale_colour_manual(values = colours)
